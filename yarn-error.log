@@ -1,0 +1,59 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\Samuel John\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
+
+PATH: 
+  C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\jdk-11.0.10\bin;C:\Users\Samuel John\OneDrive\Desktop;C:\Users\Samuel John\OneDrive\Desktop\Java;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Program Files\Microsoft VS Code\bin;C:\apache-maven-3.8.2-bin\apache-maven-3.8.2\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Samuel John\AppData\Local\Microsoft\WindowsApps;;C:\Users\Samuel John\Downloads\ideaIU-2021.1.1.win\bin\idea64;;C:\Users\Samuel John\AppData\Roaming\npm
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  14.16.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@material-ui/icons/-/icons-3.0.2.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (C:\Users\Samuel John\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141289:19)
+      at Object.onceWrapper (events.js:421:28)
+      at ClientRequest.emit (events.js:315:20)
+      at TLSSocket.emitRequestTimeout (_http_client.js:784:9)
+      at Object.onceWrapper (events.js:421:28)
+      at TLSSocket.emit (events.js:327:22)
+      at TLSSocket.Socket._onTimeout (net.js:483:8)
+      at listOnTimeout (internal/timers.js:554:17)
+      at processTimers (internal/timers.js:497:7)
+
+npm manifest: 
+  {
+    "name": "movies-app",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+      "@material-ui/core": "^3.9.4",
+      "@material-ui/icons": "^3.0.2",
+      "@material-ui/lab": "^4.0.0-alpha.60",
+      "react": "^16.8.0",
+      "react-dom": "^16.8.0",
+      "react-material-ui-form-validator": "^3.0.0",
+      "react-modal": "^3.12.1",
+      "react-router-dom": "^4.3.1",
+      "react-scripts": "1.1.5",
+      "react-youtube": "^7.13.1",
+      "typeface-roboto": "0.0.54"
+    },
+    "scripts": {
+      "start": "react-scripts start",
+      "build": "react-scripts build",
+      "test": "react-scripts test --env=jsdom",
+      "eject": "react-scripts eject"
+    },
+    "proxy": "http://localhost:8085"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
