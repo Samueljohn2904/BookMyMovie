@@ -32,7 +32,7 @@
     }
 }
 
-.modalsection{
-    vertical-align: middle;
-    align-content: center;
+.modal-section{
+    display: grid;
+    justify-content: center;
 }

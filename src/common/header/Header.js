@@ -5,12 +5,13 @@ import image1 from '../../assets/logo.svg';
 import Button from '@material-ui/core/Button'; 
 import Modal from '@material-ui/core/Modal';
 import { Fragment } from 'react';
-import TextField from "@material-ui/core/TextField"
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import {Tab} from "@material-ui/core";
+import { InputLabel, Input, Typography} from '@material-ui/core';
+import Login from './Login';
+import SignUp from './SignUp';
+
+
 
 const Header = function(props) {
 
@@ -20,11 +21,7 @@ const Header = function(props) {
         login:false
     });
 
-    const [userData, setUserData] = useState({
-        firstName:'',
-        lastName:'',
-        phone:''
-    });
+    const [tabValue, setTabValue] = useState(1);
 
     const loginHandler = function(){
         setTabStatus({login:true});
@@ -35,24 +32,41 @@ const Header = function(props) {
         setTabStatus({login:false});
     }
 
-    const OnSignUpSubmitHandler = function(){
-        console.log(userData);
-        setUserData({firstName:'',
-        lastName:'',
-        phone:''})
-    }
-
-    const inputChangehandler = function(e){
-        const currData = userData;
-        currData[e.target.name] = e.target.value;
-        console.log(currData);
-        setUserData({...currData});
+    const handleTabChange = function(event, newValue){
+        setTabValue(newValue)
     }
 
     // End of State Handlers
 
-    const {login, bookShow} = tabStatus;
-    const {firstName, lastName, phone} = userData;
+    function TabPanel(props) {
+        const { children, value, index, ...other } = props;
+      
+        return (
+          <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`full-width-tabpanel-${index}`}
+            aria-labelledby={`full-width-tab-${index}`}
+            {...other}
+          >
+            {value === index && (
+                <Typography>{children}</Typography>
+            )}
+          </div>
+        );
+      }
+      
+    const ModalStyle = {
+        display:"grid", 
+        justifyContent:"center",
+        verticalAlign:"middle", 
+        alignContent:"center",
+        maxWidth:"240px",
+        minWidth:"240px"
+    }
+
+    const {login} = tabStatus;
+  
 
     return (
         <Fragment>
@@ -60,24 +74,18 @@ const Header = function(props) {
                 <img className='header-logo' src={image1} alt="logo"/>
                 <Button className='header-btn' variant="contained" onClick={loginHandler}>Login</Button>
             </div>
-            <div className="modalsection">
-            <Modal open={login} onClose={closeLoginHandler}>
-                {/* <AppBar position="static" color="default">
-                    <Tabs value={login} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
-                        <Tab label="Login" />
-                        <Tab label="Register" />
-                    </Tabs>
-                </AppBar> */}
-                {/* <TabPanel value={login}> */}
-                <FormControl className="form-control"> 
-                    <TextField id="firstName" label="FirstName" type="text" onChange={inputChangehandler} value={firstName} name="firstName"></TextField>
-                    <TextField id="lastName" label="LastName" type="text" onChange={inputChangehandler} value={lastName} name="lastName"></TextField>
-                    <TextField id="phone" label="Phone" type="text" onChange={inputChangehandler} value={phone} name="phone"></TextField>
-                    <Button variant="contained" onClick={OnSignUpSubmitHandler}>Register</Button>
-                </FormControl>
+            <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
+                {/* <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
+                    <Tab label="Login"/>
+                    <Tab label="Sign Up"/>
+                </Tabs>
+                <TabPanel value={tabValue} index={0}>
+                    <Login/>
+                </TabPanel>
+                <TabPanel value={tabValue} index={1}> */}
+                    <SignUp/>
                 {/* </TabPanel> */}
             </Modal>
-            </div>
         </Fragment>
     )
 }
