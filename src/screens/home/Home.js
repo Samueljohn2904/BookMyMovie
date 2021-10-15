@@ -24,6 +24,7 @@ const Home = function() {
     const genreUrl = "http://localhost:8085/api/v1/genres";
 
     const [imageList, setImageList] = useState([{}]);
+    const [releasedImageList, setreleasedImageList] = useState([{}]);
     let [filteredImageList, setFilterImageList] = useState([{}]);
     const [genreList, setGenreList] = useState([{}]);
     const [artistList, setArtistList] = useState([{}]);
@@ -35,7 +36,7 @@ const Home = function() {
         releaseEndDate:""
     });
 
-    const loadArtist = async function(){
+    const loadArtist = async function(artistUrl){
         try{
             const rawResponse = await fetch(artistUrl,{
                 method:'GET'
@@ -53,7 +54,7 @@ const Home = function() {
         }       
     }
 
-    const loadGenre = async function(){
+    const loadGenre = async function(genreUrl){
         try{
             const rawResponse = await fetch(genreUrl,{
                 method:'GET'
@@ -71,14 +72,32 @@ const Home = function() {
         }       
     }
 
-    const loadImage = async function(){
+    const loadImage = async function(movieUrl){
         try{
-        const rawResponse = await fetch(movieUrl,{
+        const rawResponse = await fetch(`${movieUrl}?status=PUBLISHED`,{
             method:'GET'
         })
         if(rawResponse.ok){
             const result = await rawResponse.json();
             setImageList(result.movies);
+            console.log(result.movies);
+        }
+        else{
+            throw new Error();
+        }
+    }catch(e){
+        console.log(e.message);
+    }       
+    }
+
+    const loadReleasedImage = async function(movieUrl){
+        try{
+        const rawResponse = await fetch(`${movieUrl}status=RELEASED`,{
+            method:'GET'
+        })
+        if(rawResponse.ok){
+            const result = await rawResponse.json();
+            setreleasedImageList(result.movies);
             setFilterImageList(result.movies);
             console.log(result.movies);
         }
@@ -97,28 +116,23 @@ const Home = function() {
         console.log(filterState)
     }
 
-    const handleGenreChange = (event) => {
+    const handleSelectorChange = (event) => {
+        const currState = filterState;
         const {
           target: { value },
         } = event;
-        setFilterState({
           // On autofill we get a the stringified value.
-          genre: typeof value === 'string' ? value.split(',') : value,
-        });
-      };
+          currState[event.target.name]= typeof value === 'string' ? value.split(',') : value,
+          setFilterState({...currState});
 
-    //   const handleArtistChange = (event) => {
-    //         const tempArtist = filterState.artist;
-    //         tempArtist[event.target.name] = event.target.value;
-    //         tempArtist[id] = event.target.key;
-    //         setFilterState({...tempArtist});
-    //   };
+      };
     
 
     useEffect(()=>{
-       loadImage();
-       loadArtist();
-       loadGenre();
+       loadImage(movieUrl);
+       loadArtist(artistUrl);
+       loadGenre(genreUrl);
+       loadReleasedImage(movieUrl+"?");
     },[])
 
     const handleImageClick = function(e){
@@ -127,12 +141,32 @@ const Home = function() {
 
     const filterHandler = function(){
 
-        const tempImageList = imageList;
+        let filterurl = movieUrl+"?";
+        if(filterState.filterMovieName!==""){
+            filterurl = `${filterurl}title=${filterState.filterMovieName}&`;
+        }
+        if(filterState.genre.length!==0){
+            filterurl = `${filterurl}genre=${filterState.genre.toString()}&`;
+        }
+        if(filterState.artist.length!==0){
+            let artistString = filterState.artist.toString();
+            artistString = artistString.replace(/\s+/g, '');
+            filterurl = `${filterurl}artists=${artistString}&`;
+        }
+        if(filterState.releaseStartDate!==""){
+            filterurl = `${filterurl}start_date=${filterState.releaseStartDate}&`;
+        }
+        if(filterState.releaseEndDate!==""){
+            filterurl = `${filterurl}end_date=${filterState.releaseEndDate}&`;
+        }
+        console.log(filterurl);
+        loadReleasedImage(filterurl);
 
-        filteredImageList = tempImageList.filter((movies) => {
-            return (movies.title===filterState.filterMovieName)
-        })
-        setFilterImageList(filteredImageList);
+        if(filterState.filterMovieName==="" && filterState.artist.length===0 && filterState.genre.length===0 && filterState.releaseStartDate===""
+            && filterState.releaseEndDate===""){
+                filteredImageList = releasedImageList;
+                setFilterImageList(filteredImageList);
+            }
      }
 
     const {filterMovieName,genre,artist, releaseStartDate, releaseEndDate} = filterState;
@@ -169,7 +203,7 @@ const Home = function() {
                     <Typography color="primary" style={{margin:"10px"}}>FIND MOVIES BY:</Typography>
                     <FormControl className="form-control" style={{background:"white"}}> 
                         <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
-                                <TextField id="movieName" label="Movie Name" type="text" onChange={inputChangehandler} value={filterMovieName} name="filterMovieName"></TextField>
+                                <TextField id="movieName" label="Movie Name" type="text" onChange={inputChangehandler} value={filterMovieName} name="filterMovieName" style={{maxWidth:"240px", minWidth:"240px"}}></TextField>
                         </CardContent>
                         <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
                         <FormControl>
@@ -178,10 +212,10 @@ const Home = function() {
                                     id="genre-selector"
                                     multiple="true"
                                     value={genre}
-                                    onChange={handleGenreChange}
+                                    onChange={handleSelectorChange}
                                     renderValue={(selected) => selected.join(', ')}
                                     name="genre"
-                                    style={{maxWidth:"180px", minWidth:"180px"}}
+                                    style={{maxWidth:"240px", minWidth:"240px"}}
                                     >
                                     {genreList.map((item) => (
                                         <MenuItem key={item.genre} value={item.genre}>
@@ -199,14 +233,14 @@ const Home = function() {
                                     id="artist-selector"
                                     multiple="true"
                                     value={artist}
-                                    // onChange={handleArtistChange}
+                                    onChange={handleSelectorChange}
                                     renderValue={(selected) => selected.join(', ')}
                                     name="artist"
-                                    style={{maxWidth:"180px", minWidth:"180px"}}
+                                    style={{maxWidth:"240px", minWidth:"240px"}}
                                     >
                                     {artistList.map((item) => (
                                         <MenuItem key={item.id} value={`${item.first_name} ${item.last_name}`}>
-                                        {/* <Checkbox checked={artist.id.indexOf(item.id) > -1} /> */}
+                                        <Checkbox checked={artist.indexOf(`${item.first_name} ${item.last_name}`) > -1} />
                                         <ListItemText primary={`${item.first_name} ${item.last_name}`} />
                                         </MenuItem>
                                     ))}
@@ -214,10 +248,10 @@ const Home = function() {
                         </FormControl>
                         </CardContent>
                         <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
-                                <TextField id="releaseStartDate" label="Release Date Start" type="date" onChange={inputChangehandler} value={releaseStartDate} name="releaseStartDate" InputLabelProps = {{shrink:true}}></TextField>
+                                <TextField id="releaseStartDate" label="Release Date Start" type="date" onChange={inputChangehandler} value={releaseStartDate} name="releaseStartDate" InputLabelProps = {{shrink:true}} style={{maxWidth:"240px", minWidth:"240px"}}></TextField>
                         </CardContent>
                         <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
-                                <TextField id="releaseEndDate" label="Release Date End" type="date" onChange={inputChangehandler} value={releaseEndDate} name="releaseEndDate" InputLabelProps = {{shrink:true}}></TextField>
+                                <TextField id="releaseEndDate" label="Release Date End" type="date" onChange={inputChangehandler} value={releaseEndDate} name="releaseEndDate" InputLabelProps = {{shrink:true}} style={{maxWidth:"240px", minWidth:"240px"}}></TextField>
                         </CardContent>
                         <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
                             <Button variant="contained" color="primary" style={{marginTop:"8px", maxWidth:"240px", minWidth:"240px"}} onClick={filterHandler}>Apply</Button>
