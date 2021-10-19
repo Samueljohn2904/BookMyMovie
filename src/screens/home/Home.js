@@ -2,10 +2,10 @@ import React, { useEffect, useState} from 'react';
 import { Fragment } from 'react';
 import Header from '../../common/header/Header';
 import './home.css'
-import GridList from "@material-ui/core/GridList";
+import ImageList from "@material-ui/core/ImageList";
 import Button from '@material-ui/core/Button'; 
-import GridListTile from "@material-ui/core/GridListTile";
-import GridListTileBar from "@material-ui/core/GridListTileBar";
+import ImageListItem from "@material-ui/core/ImageListItem";
+import ImageListItemBar from "@material-ui/core/ImageListItemBar";
 import image1 from '../../assets/logo.svg';
 import { FormControl, OutlinedInput, TextField, Typography } from '@material-ui/core';
 import Card from "@material-ui/core/Card";
@@ -15,6 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
+import { Link } from 'react-router-dom';
 
 
 const Home = function() {
@@ -34,7 +35,8 @@ const Home = function() {
         artist:[],
         releaseStartDate:"",
         releaseEndDate:""
-    });
+    }); 
+
 
     const loadArtist = async function(artistUrl){
         try{
@@ -133,6 +135,7 @@ const Home = function() {
        loadArtist(artistUrl);
        loadGenre(genreUrl);
        loadReleasedImage(movieUrl+"?");
+       sessionStorage.setItem("isUserLoggedIn",'false');
     },[])
 
     const handleImageClick = function(e){
@@ -173,30 +176,33 @@ const Home = function() {
 
     return(
         <Fragment>
-        <Header headerName="Home Page"/>
+        <Header headerName={sessionStorage.getItem("isUserLoggedIn")=='true'?"LOGOUT":"LOGIN"} showBook="false"/>
         <div className="heading">
             <span>Upcoming Movies</span>
         </div>
         <div className="upcoming-movies-section">
-            <GridList cellHeight={250} cols={6} style={{display:'flex', flexDirection: "row", flexWrap: "nowrap", overflowX: "scroll"}}>
+            <ImageList rowHeight={250} cols={6} style={{display:'flex', flexDirection: "row", flexWrap: "nowrap", overflowX: "scroll", height:"250px", overflowY:"hidden"}}>
                 {imageList.map(image => (
-                    <GridListTile key={image.id}>
+                    <ImageListItem key={`${image.id}`} style={{height:"250px"}}>
                         <img className={image.title} src={image.poster_url} alt={image.title} />
-                        <GridListTileBar style={{color:"white"}} title={image.title}/>
-                    </GridListTile>
+                        <ImageListItemBar key={`${image.id}`} style={{color:"white"}} title={image.title}/>
+                    </ImageListItem>
                 ))}
-            </GridList>
+            </ImageList>
         </div>
         <div className="released-movie">
             <div className="released-movie-section">
-                <GridList cellHeight={350} cols={4} style={{display:'flex', flexDirection: "row", flexWrap: "wrap"}}>
+                <ImageList rowHeight={350} cols={4} style={{display:'flex', flexDirection: "row", flexWrap: "wrap"}}>
                     {filteredImageList.map(image => (
-                        <GridListTile key={image.id} style={{margin:"16px", cursor:"pointer"}} onClick={handleImageClick} >
+                        <Link key={`${image.id}`} to={{pathname: `/movie/${image.id}`,
+                                imageData:image}} style={{marginLeft:"16px", marginRight:"16px", marginBottom:"16px", height:"350px"}}>
+                        <ImageListItem key={`${image.id}`} style={{height:"350px"}}>
                             <img className={image.title} src={image.poster_url} alt={image.title} />
-                            <GridListTileBar style={{color:"white"}} title={image.title} subtitle={`Release Date: ${image.release_date}`}/>
-                        </GridListTile>
+                            <ImageListItemBar key={`${image.id}`} style={{color:"white"}} title={image.title} subtitle={`Release Date: ${image.release_date}`}/>
+                        </ImageListItem>
+                        </Link>
                     ))}
-                </GridList>
+                </ImageList>
             </div>
             <div className="filter-section">
                 <Card variant="outlined">
@@ -210,7 +216,7 @@ const Home = function() {
                             <InputLabel variant="standard" id="genre-selector" style={{display:"block",width:"100%"}}>   Genres</InputLabel>
                                 <Select
                                     id="genre-selector"
-                                    multiple="true"
+                                    multiple={true}
                                     value={genre}
                                     onChange={handleSelectorChange}
                                     renderValue={(selected) => selected.join(', ')}
@@ -218,7 +224,7 @@ const Home = function() {
                                     style={{maxWidth:"240px", minWidth:"240px"}}
                                     >
                                     {genreList.map((item) => (
-                                        <MenuItem key={item.genre} value={item.genre}>
+                                        <MenuItem key={`${item.id}`} value={item.genre}>
                                         <Checkbox checked={genre.indexOf(item.genre) > -1} />
                                         <ListItemText primary={item.genre} />
                                         </MenuItem>
@@ -231,7 +237,7 @@ const Home = function() {
                             <InputLabel variant="standard" id="artist-selector" style={{display:"block",width:"100%"}}>   Artists</InputLabel>
                                 <Select
                                     id="artist-selector"
-                                    multiple="true"
+                                    multiple={true}
                                     value={artist}
                                     onChange={handleSelectorChange}
                                     renderValue={(selected) => selected.join(', ')}
@@ -239,7 +245,7 @@ const Home = function() {
                                     style={{maxWidth:"240px", minWidth:"240px"}}
                                     >
                                     {artistList.map((item) => (
-                                        <MenuItem key={item.id} value={`${item.first_name} ${item.last_name}`}>
+                                        <MenuItem key={`${item.id}`} value={`${item.first_name} ${item.last_name}`}>
                                         <Checkbox checked={artist.indexOf(`${item.first_name} ${item.last_name}`) > -1} />
                                         <ListItemText primary={`${item.first_name} ${item.last_name}`} />
                                         </MenuItem>

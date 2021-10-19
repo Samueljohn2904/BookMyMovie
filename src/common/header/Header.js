@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React , {useState, useEffect} from 'react';
 import './header.css';
 import Grid from "@material-ui/core/Grid";
 import image1 from '../../assets/logo.svg';
@@ -10,15 +10,19 @@ import {Tab} from "@material-ui/core";
 import { InputLabel, Input, Typography} from '@material-ui/core';
 import Login from './Login';
 import SignUp from './SignUp';
-
+import { Link } from 'react-router-dom';
 
 
 const Header = function(props) {
 
     // State Handler Methods
 
+    // useEffect(()=>{
+    //     sessionStorage.setItem("isUserLoggedIn",true);
+    // },[])
+
     const [tabStatus, setTabStatus] = useState({
-        login:false
+        login:false,
     });
 
     const [tabValue, setTabValue] = useState(1);
@@ -35,6 +39,7 @@ const Header = function(props) {
     const handleTabChange = function(event, newValue){
         setTabValue(newValue)
     }
+
 
     // End of State Handlers
 
@@ -61,8 +66,6 @@ const Header = function(props) {
         justifyContent:"center",
         verticalAlign:"middle", 
         alignContent:"center",
-        maxWidth:"240px",
-        minWidth:"240px"
     }
 
     const {login} = tabStatus;
@@ -72,7 +75,10 @@ const Header = function(props) {
         <Fragment>
             <div className='header'>
                 <img className='header-logo' src={image1} alt="logo"/>
-                <Button className='header-btn' variant="contained" onClick={loginHandler}>Login</Button>
+                <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>{props.headerName}</Button>
+                <Link className="header-btn-2-link" to={`/bookshow/${props.movieId}`}>
+                {props.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary'>BOOK SHOW</Button>}
+                </Link>
             </div>
             <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
                 {/* <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">

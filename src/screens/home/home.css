@@ -5,8 +5,8 @@
     font-size: 1rem;
 }
 
-.upcoming-movies-section{
-    justify-content: center;
+.upcoming-movie-section{
+    height: 300px
 }
 
 .released-movie{
