@@ -1,4 +1,4 @@
-import React , {useState, useEffect} from 'react';
+import React , {useState, useEffect, useContext} from 'react';
 import './header.css';
 import Grid from "@material-ui/core/Grid";
 import image1 from '../../assets/logo.svg';
@@ -11,15 +11,14 @@ import { InputLabel, Input, Typography} from '@material-ui/core';
 import Login from './Login';
 import SignUp from './SignUp';
 import { Link } from 'react-router-dom';
+import LoginStatusContext from './LoginStatusContext';
 
 
-const Header = function(props) {
+const Header = function(properties) {
 
     // State Handler Methods
 
-    // useEffect(()=>{
-    //     sessionStorage.setItem("isUserLoggedIn",true);
-    // },[])
+    const myContext = useContext(LoginStatusContext);
 
     const [tabStatus, setTabStatus] = useState({
         login:false,
@@ -29,7 +28,6 @@ const Header = function(props) {
 
     const loginHandler = function(){
         setTabStatus({login:true});
-        console.log("In Login handler");
     }
 
     const closeLoginHandler = function(){
@@ -40,6 +38,34 @@ const Header = function(props) {
         setTabValue(newValue)
     }
 
+    const logoutHandler = async function(){
+        const bearerToken = window.sessionStorage.getItem('access-token');
+        try {
+            const rawResponse = await fetch(`${properties.baseUrl}auth/logout`, {
+                method: 'POST',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                    authorization: `Bearer ${bearerToken}`
+                }
+            });
+    
+            if(rawResponse.ok) {
+                window.sessionStorage.removeItem('user-details');
+                window.sessionStorage.removeItem('access-token');
+                myContext.setIsUserLoggedIn('false');
+            } else {
+                const error = new Error(); 
+                error.message = 'Logout Failed';
+            }
+        } catch(e) {
+            alert(`Error: ${e.message}`);
+        }
+    }
+
+    useEffect(()=>{
+        window.sessionStorage.clear();
+    },[])
 
     // End of State Handlers
 
@@ -75,23 +101,25 @@ const Header = function(props) {
         <Fragment>
             <div className='header'>
                 <img className='header-logo' src={image1} alt="logo"/>
-                <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>{props.headerName}</Button>
-                <Link className="header-btn-2-link" to={`/bookshow/${props.movieId}`}>
-                {props.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary'>BOOK SHOW</Button>}
-                </Link>
+                {myContext.isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>{properties.headerName}</Button>}
+                {myContext.isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} style={{marginLeft:"8px"}}>{properties.headerName}</Button>}
+                {properties.headerName==='LOGOUT' && <Link className="header-btn-2-link" to={`/bookshow/${properties.movieId}`}>
+                {properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary'>BOOK SHOW</Button>}
+                </Link>}
+                {properties.headerName==='LOGIN' && properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary' onClick={loginHandler}>BOOK SHOW</Button>}
             </div>
-            <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
+            {myContext.isUserLoggedIn==='false' && <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
                 {/* <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
                     <Tab label="Login"/>
                     <Tab label="Sign Up"/>
                 </Tabs>
-                <TabPanel value={tabValue} index={0}>
-                    <Login/>
-                </TabPanel>
-                <TabPanel value={tabValue} index={1}> */}
-                    <SignUp/>
-                {/* </TabPanel> */}
-            </Modal>
+                <TabPanel value={tabValue} index={0}> */}
+                    <Login baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
+                {/* </TabPanel>
+                <TabPanel value={tabValue} index={1}>
+                    <SignUp baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
+                </TabPanel> */}
+            </Modal>}
         </Fragment>
     )
 }

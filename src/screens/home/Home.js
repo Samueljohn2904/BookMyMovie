@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { Fragment } from 'react';
 import Header from '../../common/header/Header';
 import './home.css'
@@ -16,9 +16,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 import { Link } from 'react-router-dom';
+import LoginStatusContext from '../../common/header/LoginStatusContext'
 
 
-const Home = function() {
+const Home = function(props) {
 
     const movieUrl = "http://localhost:8085/api/v1/movies";
     const artistUrl = "http://localhost:8085/api/v1/artists";
@@ -36,6 +37,7 @@ const Home = function() {
         releaseStartDate:"",
         releaseEndDate:""
     }); 
+    const myContext = useContext(LoginStatusContext);
 
 
     const loadArtist = async function(artistUrl){
@@ -135,7 +137,6 @@ const Home = function() {
        loadArtist(artistUrl);
        loadGenre(genreUrl);
        loadReleasedImage(movieUrl+"?");
-       sessionStorage.setItem("isUserLoggedIn",'false');
     },[])
 
     const handleImageClick = function(e){
@@ -176,7 +177,7 @@ const Home = function() {
 
     return(
         <Fragment>
-        <Header headerName={sessionStorage.getItem("isUserLoggedIn")=='true'?"LOGOUT":"LOGIN"} showBook="false"/>
+        <Header headerName={myContext.isUserLoggedIn=='true'?"LOGOUT":"LOGIN"} showBook="false" baseUrl={props.baseUrl}/>
         <div className="heading">
             <span>Upcoming Movies</span>
         </div>

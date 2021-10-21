@@ -10,14 +10,14 @@ import CardContent from "@material-ui/core/CardContent";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from '@material-ui/core/Button'; 
 
-const SignUp = function(){
+const SignUp = function(props){
 
     const [userData, setUserData] = useState({
-        email_address:'',
-        first_name:'',
-        last_name:'',
-        mobile_number:'',
-        password:''
+        "email_address":'',
+        "first_name":'',
+        "last_name":'',
+        "mobile_number":'',
+        "password":''
     });
     const [errData,setErrData] = useState({
         errfirst_name:'',
@@ -44,29 +44,35 @@ const SignUp = function(){
             currErrData[errorField]="";
             setErrData({...currErrData});
         }
-        console.log(userData,errData);
-        console.log("ErrorField",errorField)
     }
 
-    const OnSignUpSubmitHandler = async function(){
+    const OnSignUpSubmitHandler = async function(e){
+        e.preventDefault();
         try{
-            const rawResponse = await fetch("http://localhost:8085/api/v1/signup",
+            const rawResponse = await fetch(`${props.baseUrl}signup`,
             {
                 method:"POST",
-                mode:'cors',
                 headers:{
-                    "Accept": "application/json",
-                    "Content-Type": "application/json;charset=UTF-8",
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Access-Control-Allow-Headers',
-                    'Access-Control-Allow-Methods': 'POST',
+                    "Access":"application/json",
+                    "Content-Type": "application/json;charset=UTF-8"
                 },
                 body:JSON.stringify(userData)
             }
             );
 
             const result = await rawResponse.json();
-            if(rawResponse.ok)
-                console.log("Success")
+            console.log(result);
+            if(rawResponse.ok){
+                setUserData({
+                    "email_address":'',
+                    "first_name":'',
+                    "last_name":'',
+                    "mobile_number":'',
+                    "password":''
+                })
+                setSuccessMessage("Registration Successful. Please Login!");
+                props.closeModalHandler();
+            }
             else
                 throw new Error("Failed to fetch");
         }catch(e){
@@ -123,7 +129,8 @@ const SignUp = function(){
                         <span className="red" style={{color:"red"}}>{errmobile_number}</span>
                     </FormHelperText>
                 </FormControl>
-                <span>Registration Success</span>
+                <br></br>
+                <span>{successMessage}</span>
             </CardContent>
             <CardContent>
             <Button style={{maxWidth:"240px", minWidth:"240px"}}

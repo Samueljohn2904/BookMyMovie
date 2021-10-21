@@ -5,10 +5,6 @@
     font-size: 1rem;
 }
 
-.upcoming-movie-section{
-    height: 300px
-}
-
 .released-movie{
     display: flex;
     flex-direction: row;
