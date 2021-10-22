@@ -24,7 +24,7 @@ const Header = function(properties) {
         login:false,
     });
 
-    const [tabValue, setTabValue] = useState(1);
+    const [tabValue, setTabValue] = useState(0);
 
     const loginHandler = function(){
         setTabStatus({login:true});
@@ -41,7 +41,7 @@ const Header = function(properties) {
     const logoutHandler = async function(){
         const bearerToken = window.sessionStorage.getItem('access-token');
         try {
-            const rawResponse = await fetch(`${properties.baseUrl}auth/logout`, {
+            const rawResponse = await fetch(`/api/v1/auth/logout`, {
                 method: 'POST',
                 headers: {
                     "Accept": "application/json",
@@ -63,10 +63,6 @@ const Header = function(properties) {
         }
     }
 
-    useEffect(()=>{
-        window.sessionStorage.clear();
-    },[])
-
     // End of State Handlers
 
     function TabPanel(props) {
@@ -81,7 +77,7 @@ const Header = function(properties) {
             {...other}
           >
             {value === index && (
-                <Typography>{children}</Typography>
+                <div>{children}</div>
             )}
           </div>
         );
@@ -101,24 +97,26 @@ const Header = function(properties) {
         <Fragment>
             <div className='header'>
                 <img className='header-logo' src={image1} alt="logo"/>
-                {myContext.isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>{properties.headerName}</Button>}
-                {myContext.isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} style={{marginLeft:"8px"}}>{properties.headerName}</Button>}
-                {properties.headerName==='LOGOUT' && <Link className="header-btn-2-link" to={`/bookshow/${properties.movieId}`}>
+                {myContext.isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>LOGIN</Button>}
+                {myContext.isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} style={{marginLeft:"8px"}}>LOGOUT</Button>}
+                {myContext.isUserLoggedIn=='true' && <Link className="header-btn-2-link" to={`/bookshow/${properties.movieId}`}>
                 {properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary'>BOOK SHOW</Button>}
                 </Link>}
-                {properties.headerName==='LOGIN' && properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary' onClick={loginHandler}>BOOK SHOW</Button>}
+                {myContext.isUserLoggedIn=='false' && properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary' onClick={loginHandler}>BOOK SHOW</Button>}
             </div>
             {myContext.isUserLoggedIn==='false' && <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
-                {/* <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
-                    <Tab label="Login"/>
-                    <Tab label="Sign Up"/>
-                </Tabs>
-                <TabPanel value={tabValue} index={0}> */}
-                    <Login baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
-                {/* </TabPanel>
-                <TabPanel value={tabValue} index={1}>
-                    <SignUp baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
-                </TabPanel> */}
+                <div className="Login-modal">
+                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
+                        <Tab label="LOGIN"/>
+                        <Tab label="REGISTER"/>
+                    </Tabs>
+                    <TabPanel value={tabValue} index={0}>
+                        <Login baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
+                    </TabPanel>
+                    <TabPanel value={tabValue} index={1}>
+                        <SignUp baseUrl={properties.baseUrl} closeModalHandler={closeLoginHandler}/>
+                    </TabPanel>
+                </div>
             </Modal>}
         </Fragment>
     )

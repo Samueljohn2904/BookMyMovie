@@ -23,8 +23,8 @@ const Login = function(props){
     })
     
     const [errData,setErrData] = useState({
-        erruser_name:'',
-        errPassword:""
+        erruserName:'',
+        errloginPassword:""
     });
     
     const loginInputhandler = function(e){
@@ -43,6 +43,7 @@ const Login = function(props){
             currErrData[errorField]="";
             setErrData({...currErrData});
         }
+        console.log(errData)
     }
     
     const OnLoginSubmitHandler = async function(e){
@@ -50,7 +51,7 @@ const Login = function(props){
         const param = window.btoa(`${loginData.userName}:${loginData.loginPassword}`);
         console.log(param)
         try {
-            const rawResponse = await fetch(`${props.baseUrl}auth/login`, {
+            const rawResponse = await fetch(`/api/v1/auth/login`, {
                 method: 'POST',
                 headers: {
                     "Accept": "application/json",
@@ -84,28 +85,28 @@ const Login = function(props){
     
     return (
     <Fragment>
-        <Card variant="outlined" style={{alignContent:"center"}}>
-            <CardContent style={{maxWidth:"240px", minWidth:"240px"}}>
+        <Card variant="outlined" style={{alignContent:"center", display:"flex", flexDirection:"column",alignItems:"center"}}>
+            <CardContent style={{maxWidth:"240px", minWidth:"240px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
                 <FormControl required className="form-control" style={{background:"white"}}> 
                     <InputLabel htmlFor="userName">User Name</InputLabel>
                     <Input name="userName" type="text" value={userName} onChange={loginInputhandler}></Input>
                     <FormHelperText className={userName}>
-                        <span className="red" style={{color:"red"}}>{errData.erruser_name}</span>
+                        <Typography component="span" className="red" style={{color:"red"}}>{errData.erruserName}</Typography>
                     </FormHelperText>
                 </FormControl>
 
             </CardContent>
-            <CardContent style={{maxWidth:"240px", minWidth:"240px"}}>
+            <CardContent style={{maxWidth:"240px", minWidth:"240px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
                 <FormControl required className="form-control" style={{background:"white"}}> 
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <Input name="loginPassword" type="password" value={loginPassword} onChange={loginInputhandler}></Input>
                     <FormHelperText className={loginPassword}>
-                        <span className="red" style={{color:"red"}}>{errData.errPassword}</span>
+                        <Typography component="span" className="red" style={{color:"red"}}>{errData.errloginPassword}</Typography>
                     </FormHelperText>
                 </FormControl>
             </CardContent>
             <CardContent>
-                <Button style={{maxWidth:"240px", minWidth:"240px"}}
+                <Button style={{display:"flex", flexDirection:"row", justifyContent:"center"}}
                     variant="contained"
                     onClick={OnLoginSubmitHandler}
                     color="primary"

@@ -35,6 +35,7 @@ const BookShow = (props) => {
 
   useEffect(() => {
     let dataShows = null;
+    console.log(props.baseUrl + "movies/" + props.match.params.id + "/shows")
 
     fetch(props.baseUrl + "movies/" + props.match.params.id + "/shows", {
       method: "GET",
