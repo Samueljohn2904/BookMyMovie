@@ -8,15 +8,18 @@ import StarBorderIcon from "@material-ui/icons/StarBorder";
 import ImageList from "@material-ui/core/ImageList";
 import ImageListItem from "@material-ui/core/ImageListItem";
 import ImageListItemBar from "@material-ui/core/ImageListItemBar";
-import LoginStatusContext from '../../common/header/LoginStatusContext';
 import Rating from '@material-ui/lab/Rating';
 
 
 const Details = function(props){
 
-    const movieUrl = 'http://localhost:8085/api/v1/movies/';
-    const [ratingValue, setRatingValue] = useState(0);
+    // API to fetch Movie details from database
 
+    const movieUrl = 'http://localhost:8085/api/v1/movies/';
+
+    // state variables to store value of the state
+
+    const [ratingValue, setRatingValue] = useState(0);
     const [movieData,setMovieData] = useState({
         artists:[],
         censor_board_rating:"",
@@ -32,11 +35,10 @@ const Details = function(props){
         trailer_url:"",
         wiki_url:""
     });
-   
     const backLabel = "< Back to Home Page";
-
-    const myContext = useContext(LoginStatusContext);
     
+    // Function to fetch movie details from database
+
     const loadMovieDetails = async function(){
         try{
             const rawResponse = await fetch(`${movieUrl}${props.match.params.id}`,{
@@ -54,14 +56,13 @@ const Details = function(props){
         }
     }
     
+    // Hook to fetch movie details on page load
 
     useEffect(()=>{
         loadMovieDetails();
-        if(sessionStorage.getItem('access-token')===null)
-            myContext.setIsUserLoggedIn("false");
-        else
-            myContext.setIsUserLoggedIn('true');
     },[])
+
+    // Variables to store fetched details
 
     const {artists,
         censor_board_rating,
@@ -94,62 +95,61 @@ const Details = function(props){
 
     return(
         <Fragment>
-        <Header headerName={myContext.isUserLoggedIn=='true'?"LOGOUT":"LOGIN"} showBook='true' movieId={id}/>
-        <div className='back-to-home'>
-            <Link to='/'>
-                <Typography variant='body1'>{backLabel}</Typography>
-            </Link>
-        </div>
-        <div className="movie-details-section">
-            <div className='movie-poster'>
-                <img src={poster_url} alt={title} onError={(e)=>{console.log(`Image not found`)}}></img>
+            <Header showBook='true' movieId={id}/>
+            <div className='back-to-home'>
+                <Link to='/'>
+                    <Typography variant='body1'>{backLabel}</Typography>
+                </Link>
             </div>
-            <div className='movie-trailer'>
-                <Typography variant="h2">{title}</Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Genres:
-                    <Typography component="span" className="descriptions">  {genres.toString()}</Typography>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Duration:
-                    <Typography component="span" className="descriptions">  {duration}</Typography>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Release Date:
-                    <Typography component="span" className="descriptions">  {releaseDate.toDateString()}</Typography>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Rating:
-                    <Typography component="span" className="descriptions">  {rating}</Typography>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Plot:
-                    <Typography component="span" className="descriptions">  {storyline}</Typography>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Wiki Link:
-                    <a  className="descriptions" href={wiki_url}>  {wiki_url}</a>
-                </Typography>
-                <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Trailer:
-                    <YouTube videoId={youtubeVideoId[1]} opts={playerOpts} onReady={onReady}/>
-                </Typography>
+            <div className="movie-details-section">
+                <div className='movie-poster'>
+                    <img src={poster_url} alt={title} onError={(e)=>{console.log(`Image not found`)}}></img>
+                </div>
+                <div className='movie-trailer'>
+                    <Typography variant="h2">{title}</Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Genres:
+                        <Typography component="span" className="descriptions">  {genres.toString()}</Typography>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Duration:
+                        <Typography component="span" className="descriptions">  {duration}</Typography>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Release Date:
+                        <Typography component="span" className="descriptions">  {releaseDate.toDateString()}</Typography>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Rating:
+                        <Typography component="span" className="descriptions">  {rating}</Typography>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Plot:
+                        <Typography component="span" className="descriptions">  {storyline}</Typography>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Wiki Link:
+                        <a  className="descriptions" href={wiki_url}>  {wiki_url}</a>
+                    </Typography>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold", marginTop:"16px"}}>Trailer:
+                        <YouTube videoId={youtubeVideoId[1]} opts={playerOpts} onReady={onReady}/>
+                    </Typography>
 
+                </div>
+                <div className='movie-rating'>
+                    <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Rate this movie:</Typography>
+                    <Rating
+                        name="rating"
+                        icon={<StarBorderIcon value={ratingValue}/>}
+                        onChange={(newValue) => {
+                            setRatingValue(newValue);
+                        }}
+                    />
+                    <Typography variant="subtitle2" style={{fontWeight:"bold", marginTop:"16px", marginBottom:"16px"}}>Artists</Typography>
+                    <ImageList cols={2} style={{display:'flex', flexDirection: "row", overflowY:"hidden"}}>
+                        {artists.map(artist => (
+                            <ImageListItem key={`${artist.id}`}>
+                                <img className={artist.first_name} src={artist.profile_url} alt={artist.first_name} />
+                                <ImageListItemBar key={`${artist.id}`} style={{color:"white"}} title={`${artist.first_name} ${artist.last_name}`}/>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
             </div>
-            <div className='movie-rating'>
-                <Typography variant="subtitle1" style={{fontWeight:"bold"}}>Rate this movie:</Typography>
-                <Rating
-                    name="rating"
-                    icon={<StarBorderIcon value={ratingValue}/>}
-                    onChange={(newValue) => {
-                        setRatingValue(newValue);
-                    }}
-                />
-                <Typography variant="subtitle2" style={{fontWeight:"bold", marginTop:"16px", marginBottom:"16px"}}>Artists</Typography>
-                <ImageList cols={2} style={{display:'flex', flexDirection: "row", overflowY:"hidden"}}>
-                    {artists.map(artist => (
-                        <ImageListItem key={`${artist.id}`}>
-                            <img className={artist.first_name} src={artist.profile_url} alt={artist.first_name} />
-                            <ImageListItemBar key={`${artist.id}`} style={{color:"white"}} title={`${artist.first_name} ${artist.last_name}`}/>
-                        </ImageListItem>
-                    ))}
-                </ImageList>
-
-            </div>
-        </div>
         </Fragment>
     )
 }

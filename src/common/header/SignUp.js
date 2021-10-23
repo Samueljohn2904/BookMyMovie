@@ -8,6 +8,8 @@ import Button from '@material-ui/core/Button';
 
 const SignUp = function(props){
 
+    // state variable to store user details and error message
+
     const [userData, setUserData] = useState({
         "email_address":'',
         "first_name":'',
@@ -24,6 +26,8 @@ const SignUp = function(props){
     });
     const [successMessage, setSuccessMessage] = useState("");
     const [registerDataOk, setRegisterDataOk] = useState(0);
+
+    // Function to handle user inputs
 
     const inputChangehandler = function(e){
         const currErrData = errData;
@@ -43,6 +47,8 @@ const SignUp = function(props){
         }
     }
 
+    // Function to validate the user inputs on clicking Register button
+
     const validateData = function() {
         let errorData = errData;
         errorData.erremail_address=(userData.email_address==="")?"Required":"";
@@ -59,6 +65,8 @@ const SignUp = function(props){
             setRegisterDataOk(0);
         }
     }
+
+    // Function to send details to backend server for new user registration
 
     const OnSignUpSubmitHandler = async function(e){
         e.preventDefault();
@@ -136,7 +144,7 @@ const SignUp = function(props){
                 variant="contained"
                 onClick={OnSignUpSubmitHandler}
                 color="primary"
-            >Register
+            >REGISTER
             </Button>
             </CardContent>
         </Card>

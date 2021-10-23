@@ -10,22 +10,23 @@ import CardContent from "@material-ui/core/CardContent";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from '@material-ui/core/Button'; 
 import { Fragment } from 'react';
-import LoginStatusContext from './LoginStatusContext';
 
 
 const Login = function(props){
 
-    const myContext = useContext(LoginStatusContext);
+    // State variables to store login Data and Error data
 
     const [loginData, setLoginData] = useState({
         userName:"",
         loginPassword:""
     })
-    
     const [errData,setErrData] = useState({
         erruserName:'',
         errloginPassword:""
     });
+
+    // Function to handle the login inputs from user and if user fails to enter required details then 
+    //Error Data state is updated to show error to the user
     
     const loginInputhandler = function(e){
         const currErrData = errData;
@@ -45,11 +46,12 @@ const Login = function(props){
         }
         console.log(errData)
     }
+
+    // The data entered by the user is sent to server for authentication
     
     const OnLoginSubmitHandler = async function(e){
         e.preventDefault();
         const param = window.btoa(`${loginData.userName}:${loginData.loginPassword}`);
-        console.log(param)
         try {
             const rawResponse = await fetch(`/api/v1/auth/login`, {
                 method: 'POST',
@@ -64,7 +66,6 @@ const Login = function(props){
             if(rawResponse.ok) {
                 window.sessionStorage.setItem('user-details', JSON.stringify(result));
                 window.sessionStorage.setItem('access-token', rawResponse.headers.get('access-token'));
-                myContext.setIsUserLoggedIn('true');
                 setLoginData({
                     userName:"",
                     loginPassword:""
@@ -110,7 +111,7 @@ const Login = function(props){
                     variant="contained"
                     onClick={OnLoginSubmitHandler}
                     color="primary"
-                >Login
+                >LOGIN
                 </Button>
                 </CardContent>
         </Card>
