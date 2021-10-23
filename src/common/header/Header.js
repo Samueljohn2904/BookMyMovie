@@ -112,10 +112,10 @@ const Header = function(properties) {
                 <img className='header-logo' src={image1} alt="logo"/>
                 {isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} style={{marginLeft:"8px"}}>LOGIN</Button>}
                 {isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} style={{marginLeft:"8px"}}>LOGOUT</Button>}
-                {isUserLoggedIn=='true' && <Link className="header-btn-2-link" to={`/bookshow/${properties.movieId}`}>
+                {isUserLoggedIn==='true' && <Link className="header-btn-2-link" to={`/bookshow/${properties.movieId}`}>
                 {properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary'>BOOK SHOW</Button>}
                 </Link>}
-                {isUserLoggedIn=='false' && properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary' onClick={loginHandler}>BOOK SHOW</Button>}
+                {isUserLoggedIn==='false' && properties.showBook==='true' && <Button className='header-btn-2' variant="contained" color='primary' onClick={loginHandler}>BOOK SHOW</Button>}
             </div>
             {isUserLoggedIn==='false' && <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
                 <div className="Login-modal">

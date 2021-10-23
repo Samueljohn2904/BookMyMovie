@@ -137,7 +137,6 @@ const Home = function(props) {
         const {
           target: { value },
         } = event;
-          // On autofill we get a the stringified value.
           currState[event.target.name]= typeof value === 'string' ? value.split(',') : value,
           setFilterState({...currState});
 

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useContext} from 'react';
+import React, { Fragment, useEffect, useState} from 'react';
 import Header from '../../common/header/Header';
 import './details.css';
 import { Typography} from '@material-ui/core';

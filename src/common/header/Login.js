@@ -1,9 +1,6 @@
-import React , {useState, useContext} from 'react';
+import React , {useState} from 'react';
 import './header.css';
 import FormControl from "@material-ui/core/FormControl";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import {Tab} from "@material-ui/core";
 import { InputLabel, Input, Typography} from '@material-ui/core';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
