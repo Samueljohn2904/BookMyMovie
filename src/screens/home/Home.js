@@ -50,7 +50,6 @@ const Home = function(props) {
             if(rawResponse.ok){
                 const result = await rawResponse.json();
                 setArtistList(result.artists);
-                console.log(result.artists);
             }
             else{
                 throw new Error();
@@ -70,7 +69,6 @@ const Home = function(props) {
             if(rawResponse.ok){
                 const result = await rawResponse.json();
                 setGenreList(result.genres);
-                console.log(result.genres);
             }
             else{
                 throw new Error();
@@ -90,7 +88,6 @@ const Home = function(props) {
         if(rawResponse.ok){
             const result = await rawResponse.json();
             setImageList(result.movies);
-            console.log(result.movies);
         }
         else{
             throw new Error();
@@ -173,7 +170,6 @@ const Home = function(props) {
         if(filterState.releaseEndDate!==""){
             filterurl = `${filterurl}end_date=${filterState.releaseEndDate}&`;
         }
-        console.log(filterurl);
         loadReleasedImage(filterurl);
 
         if(filterState.filterMovieName==="" && filterState.artist.length===0 && filterState.genre.length===0 && filterState.releaseStartDate===""

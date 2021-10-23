@@ -85,7 +85,6 @@ const SignUp = function(props){
                 );
 
                 const result = await rawResponse.json();
-                console.log(result);
                 if(rawResponse.ok){
                     setSuccessMessage("Registration Successful. Please Login!");
                 }
